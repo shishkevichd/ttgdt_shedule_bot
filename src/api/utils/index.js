@@ -22,9 +22,7 @@ class TimeManager {
     const now = new Date();
 
     const startOfYear = new Date(now.getFullYear(), 0, 1);
-
     const daysDifference = Math.floor((now - startOfYear) / (24 * 60 * 60 * 1000));
-
     const currentWeekNumber = Math.ceil((daysDifference + startOfYear.getDay() + 1) / 7);
 
     return currentWeekNumber % 2;
@@ -32,6 +30,8 @@ class TimeManager {
 }
 
 class ConstantsManager {
+  static TELEGRAM_BOT_TOKEN = process.env.ENV_TG_TOKEN || ""
+
   static SHEDULE_REPLACMENTS_URL = "https://www.ttgdt.stu.ru/students/zam"
   static SHEDULE_HOME_URL = "https://www.ttgdt.stu.ru/students/raspisanie-zanyatij-ochnyh-otdelenij"
   static SHEDULE_GROUP_URL = "https://www.ttgdt.stu.ru/students/raspisanie-zanyatij"

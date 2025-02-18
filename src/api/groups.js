@@ -1,10 +1,12 @@
 import { parse } from "node-html-parser"
-import { ConstantsManager } from "./utils"
+import { ConstantsManager } from "./utils/index.js"
 
 import Fuse from "fuse.js"
 
+let groupList = []
+
 const GroupManager = {
-  getAllGroups: async () => {
+  fetchGroups: async () => {
     const request = await fetch(
       ConstantsManager.SHEDULE_HOME_URL,
       {
@@ -20,11 +22,15 @@ const GroupManager = {
 
     const groupArray = parsedData.getElementById("gr_no").children.map((groupOption) => groupOption.text)
 
-    return groupArray.slice(1, groupArray.length)
+    groupList = groupArray.slice(1, groupArray.length)
+
+    return true
   },
 
-  getGroupByString: async (groupArray, targetGroup) => {
-    const fuse = new Fuse(groupArray)
+  getGroupByString: async (targetGroup) => {
+    if (groupList.length <= 0) return undefined
+
+    const fuse = new Fuse(groupList)
 
     return fuse.search(targetGroup)[0].item;
   }

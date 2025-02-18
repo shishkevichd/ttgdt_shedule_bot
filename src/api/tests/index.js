@@ -1,27 +1,21 @@
-import GroupManager from "./groups.js";
-import Shedule from "./shedule.js";
-import TimeManager from "./utils.js";
+import { TimeManager } from "../utils/index.js";
+import ReplacmentsManager from "../replacments.js";
+import GroupManager from "../groups.js";
+import Shedule from "../shedule.js";
 
 /* 
   Получение списка групп
 */
 
-const groups = await GroupManager.getAllGroups()
-const shedule = new Shedule(await GroupManager.getGroupByString(groups, "331"))
-
-console.log(groups)
+// await GroupManager.fetchGroups()
 
 /* 
   Поиск группы по запросу
 */
 
-console.log(await GroupManager.getGroupByString(groups, "531"))
-console.log(await GroupManager.getGroupByString(groups, "333"))
-console.log(await GroupManager.getGroupByString(groups, "241"))
-
-// => 211,222
-// чево))
-console.log(await GroupManager.getGroupByString(groups, "2"))
+// console.log(await GroupManager.getGroupByString("531"))
+// console.log(await GroupManager.getGroupByString("333"))
+// console.log(await GroupManager.getGroupByString("241"))
 
 /*
   Получение четности недели
@@ -30,12 +24,20 @@ console.log(await GroupManager.getGroupByString(groups, "2"))
   1 - четная неделя
 */
 
-console.log(TimeManager.getWeekParity())
+// console.log(TimeManager.getWeekParity())
 
 /* 
-  Получение расписания группы (без замен/с заменами)
+  Получение расписания группы
 */
 
-const groupShedule = await shedule.getShedule()
+// const groupShedule = new Shedule(await GroupManager.getGroupByString("333"))
 
-console.log(JSON.stringify(groupShedule, null, "\t"))
+// console.log(JSON.stringify(await groupShedule.getShedule(), null, "\t"))
+
+/* 
+  Получения списка замен
+*/
+
+await ReplacmentsManager.fetchReplacments()
+
+console.log(JSON.stringify({ replacments: await ReplacmentsManager.getReplacments() }, null, "\t"))
