@@ -1,0 +1,33 @@
+{
+  "name": "ttgdt_shedule_bot",
+  "version": "0.0.1",
+  "description": "A bot to get schedules/replacements in the TTGDT",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/bot/index.js",
+    "test": "node src/api/tests/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shishkevichd/ttgdt_shedule_bot.git"
+  },
+  "keywords": [
+    "shedule",
+    "ttgdt"
+  ],
+  "author": {
+    "url": "https://github.com/shishkevichd",
+    "name": "Shishkevich Danil"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shishkevichd/ttgdt_shedule_bot/issues"
+  },
+  "homepage": "https://github.com/shishkevichd/ttgdt_shedule_bot#readme",
+  "dependencies": {
+    "fuse.js": "^7.1.0",
+    "zustand": "^5.0.3",
+    "node-html-parser": "^7.0.1",
+    "node-telegram-bot-api": "^0.66.0"
+  }
+}
