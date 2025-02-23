@@ -1,43 +1,12 @@
-import { TimeManager } from "../utils/index.js";
-import ReplacmentsManager from "../replacments.js";
+import SheduleManager from "../shedule.js";
 import GroupManager from "../groups.js";
-import Shedule from "../shedule.js";
 
-/* 
-  Получение списка групп
-*/
+await GroupManager.fetchGroups()
 
-// await GroupManager.fetchGroups()
+const selectedGroup = await GroupManager.getGroupByString("331")
 
-/* 
-  Поиск группы по запросу
-*/
+const groupShedule = new SheduleManager(selectedGroup.name)
 
-// console.log(await GroupManager.getGroupByString("531"))
-// console.log(await GroupManager.getGroupByString("333"))
-// console.log(await GroupManager.getGroupByString("241"))
+const week = await groupShedule.getSheduleForDay(3)
 
-/*
-  Получение четности недели
-
-  0 - нечетная неделя
-  1 - четная неделя
-*/
-
-// console.log(TimeManager.getWeekParity())
-
-/* 
-  Получение расписания группы
-*/
-
-// const groupShedule = new Shedule(await GroupManager.getGroupByString("333"))
-
-// console.log(JSON.stringify(await groupShedule.getShedule(), null, "\t"))
-
-/* 
-  Получения списка замен
-*/
-
-await ReplacmentsManager.fetchReplacments()
-
-console.log(JSON.stringify({ replacments: await ReplacmentsManager.getReplacments() }, null, "\t"))
+console.log(week)

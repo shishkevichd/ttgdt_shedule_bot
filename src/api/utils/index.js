@@ -38,6 +38,11 @@ class TimeManager {
     const daysDifference = Math.floor((now - startOfYear) / (24 * 60 * 60 * 1000));
     const currentWeekNumber = Math.ceil((daysDifference + startOfYear.getDay() + 1) / 7);
 
+    /* 
+    0 = нечетная
+    1 = четная
+    */
+
     return currentWeekNumber % 2;
   }
 

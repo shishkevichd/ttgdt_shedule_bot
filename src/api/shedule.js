@@ -1,16 +1,13 @@
-import ReplacmentsManager from "./replacments.js";
 import { TimeManager, ConstantsManager } from "./utils/index.js";
 import { parse } from "node-html-parser"
 
-class Shedule {
+class SheduleManager {
   constructor(groupNumber = "") {
     this.groupNumber = groupNumber
+    this.shedule = this.fetchShedule()
   }
 
-  async getSheduleForWeek(
-    withReplacments = false,
-    withWeekParitied = true
-  ) {
+  async fetchShedule() {
     let formData = new FormData()
     formData.append("gr_no", this.groupNumber)
 
@@ -40,7 +37,6 @@ class Shedule {
 
         sheduleArray.push({
           weekday: TimeManager.getWeekdayByString(htmlElement.children[0].text),
-          group: this.groupNumber,
           lessons: [
             {
               lessonPosition: htmlElement.children[1].text,
@@ -68,12 +64,29 @@ class Shedule {
       }
     }
 
+    tableBody
+      .children
+      .slice(1, tableBody.children.length)
+      .forEach((lessonTr) => addSubjectToDayShedule(lessonTr))
+
+    return sheduleArray
+  }
+
+  async getSheduleForWeek(withWeekParity = true) {
+    let sheduleArray = await this.shedule
+
     const filterScheduleByWeekParity = () => {
       sheduleArray = sheduleArray.map((dayShedule) => {
         dayShedule.lessons = dayShedule.lessons
-          .filter((lesson) => TimeManager.getWeekParity() === 0 ? !lesson.lessonPosition.includes("Н") : !lesson.lessonPosition.includes("Ч"))
+          .filter((lesson) => {
+            const lessonPosition = `${lesson.lessonPosition}`
+
+            return TimeManager.getWeekParity() === 0 ? !lessonPosition.includes("Н") : !lessonPosition.includes("Ч")
+          })
           .map((lesson) => {
-            lesson.lessonPosition = parseInt(lesson.lessonPosition.replace(/[ЧН]/, ""))
+            const lessonPosition = `${lesson.lessonPosition}`
+
+            lesson.lessonPosition = parseInt(lessonPosition.replace(/[ЧН]/, ""))
 
             return lesson
           })
@@ -82,27 +95,20 @@ class Shedule {
       })
     }
 
-    const addReplacmentsToExistedShedule = () => {
-      const groupReplacments = ReplacmentsManager
-        .getReplacments()
-        .filter((groupReplacment) => groupReplacment.group === this.groupNumber)
-
-      const shedule = sheduleArray
-    }
-
-    tableBody
-      .children
-      .slice(1, tableBody.children.length)
-      .forEach((lessonTr) => addSubjectToDayShedule(lessonTr))
-
-    if (withWeekParitied) filterScheduleByWeekParity()
-
-    if (withWeekParitied && withReplacments) addReplacmentsToExistedShedule()
+    if (withWeekParity) filterScheduleByWeekParity()
 
     return sheduleArray
   }
 
+  async getSheduleForDay(weekdayNumber = 1, withWeekParity = true) {
+    const shedule = await this.getSheduleForWeek(withWeekParity)
 
+    const selectedWeekday = shedule.filter((weekdayShedule) => {
+      return weekdayShedule.weekday === weekdayNumber
+    })
+
+    return selectedWeekday[0]
+  }
 }
 
-export default Shedule
+export default SheduleManager
