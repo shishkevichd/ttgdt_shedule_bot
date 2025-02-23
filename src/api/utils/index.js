@@ -5,14 +5,27 @@ class TimeManager {
     return day === 0 ? 7 : day;
   }
 
-  static getWeekdayByString(str) {
-    const WEEKDAY_VALUES = {
+  static getWeekdayByString(str, revert = false) {
+    let WEEKDAY_VALUES = {
       'Понедельник': 1,
       'Вторник': 2,
       'Среда': 3,
       'Четверг': 4,
       'Пятница': 5,
       'Суббота': 6,
+      'Воскресенье': 7
+    }
+
+    if (revert) {
+      WEEKDAY_VALUES = {
+        1: 'Понедельник',
+        2: 'Вторник',
+        3: 'Среда',
+        4: 'Четверг',
+        5: 'Пятница',
+        6: 'Суббота',
+        7: 'Воскресенье'
+      }
     }
 
     return WEEKDAY_VALUES[str]
@@ -27,10 +40,23 @@ class TimeManager {
 
     return currentWeekNumber % 2;
   }
+
+  static parseLessonNumbers(inputStr) {
+    const timePattern = /^\d{1,2}\.\d{2}$/;
+    
+    if (timePattern.test(inputStr)) {
+      return [inputStr]; 
+    }
+    
+    const numbers = inputStr.split(/[,.]/);
+    
+    return numbers.map(num => parseInt(num, 10));
+  }
 }
 
 class ConstantsManager {
   static TELEGRAM_BOT_TOKEN = process.env.ENV_TG_TOKEN || ""
+  static TELEGRAM_BOT_ADMIN_ID = process.env.ENV_TG_ADMINID || 0
 
   static SHEDULE_REPLACMENTS_URL = "https://www.ttgdt.stu.ru/students/zam"
   static SHEDULE_HOME_URL = "https://www.ttgdt.stu.ru/students/raspisanie-zanyatij-ochnyh-otdelenij"

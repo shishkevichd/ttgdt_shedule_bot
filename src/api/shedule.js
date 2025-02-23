@@ -1,3 +1,4 @@
+import ReplacmentsManager from "./replacments.js";
 import { TimeManager, ConstantsManager } from "./utils/index.js";
 import { parse } from "node-html-parser"
 
@@ -6,9 +7,9 @@ class Shedule {
     this.groupNumber = groupNumber
   }
 
-  async getShedule(
+  async getSheduleForWeek(
     withReplacments = false,
-    withWeekParitiedSubjects = true
+    withWeekParitied = true
   ) {
     let formData = new FormData()
     formData.append("gr_no", this.groupNumber)
@@ -72,7 +73,7 @@ class Shedule {
         dayShedule.lessons = dayShedule.lessons
           .filter((lesson) => TimeManager.getWeekParity() === 0 ? !lesson.lessonPosition.includes("Н") : !lesson.lessonPosition.includes("Ч"))
           .map((lesson) => {
-            lesson.lessonPosition = lesson.lessonPosition.replace(/[ЧН]/, "")
+            lesson.lessonPosition = parseInt(lesson.lessonPosition.replace(/[ЧН]/, ""))
 
             return lesson
           })
@@ -81,15 +82,27 @@ class Shedule {
       })
     }
 
+    const addReplacmentsToExistedShedule = () => {
+      const groupReplacments = ReplacmentsManager
+        .getReplacments()
+        .filter((groupReplacment) => groupReplacment.group === this.groupNumber)
+
+      const shedule = sheduleArray
+    }
+
     tableBody
       .children
       .slice(1, tableBody.children.length)
       .forEach((lessonTr) => addSubjectToDayShedule(lessonTr))
 
-    if (withWeekParitiedSubjects) filterScheduleByWeekParity()
+    if (withWeekParitied) filterScheduleByWeekParity()
+
+    if (withWeekParitied && withReplacments) addReplacmentsToExistedShedule()
 
     return sheduleArray
   }
+
+
 }
 
 export default Shedule

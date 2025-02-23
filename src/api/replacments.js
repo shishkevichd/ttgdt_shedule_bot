@@ -1,4 +1,4 @@
-import { ConstantsManager } from "./utils/index.js"
+import { ConstantsManager, TimeManager } from "./utils/index.js"
 import { parse } from "node-html-parser"
 
 let replacmentsList = []
@@ -23,6 +23,56 @@ class ReplacmentsManager {
     let replacmentsArray = []
     let selectedGroup = -1
 
+    const formatReplacment = (
+      elements,
+      createNewGroupReplacment = false
+    ) => {
+      const getLessonPosition = () => {
+        return TimeManager.parseLessonNumbers(elements[1].text)
+      } 
+
+      const getReplacedLesson = () => {
+        return elements[2].text
+      }
+
+      const getSubstitutedLesson = () => {
+        return elements[3].text
+      }
+
+      const getLessonClassroom = () => {
+        return elements[4].text
+      }
+
+      const getGroup = () => {
+        return elements[0].text
+      }
+
+      if (createNewGroupReplacment) {
+        selectedGroup += 1
+
+        replacmentsArray.push({
+          group: getGroup(),
+          lessons: [
+            {
+              lessonPosition: getLessonPosition(),
+              replacedLesson: getReplacedLesson(),
+              substitutedLesson: getSubstitutedLesson(),
+              lessonClassroom: getLessonClassroom()
+            }
+          ]
+        })
+      } else {
+        replacmentsArray[selectedGroup].lessons.push(
+          {
+            lessonPosition: getLessonPosition(),
+            replacedLesson: getReplacedLesson(),
+            substitutedLesson: getSubstitutedLesson(),
+            lessonClassroom: getLessonClassroom()
+          }
+        )
+      }
+    } 
+
     const addReplacment = (htmlElement) => {
       if (
         htmlElement.children[0].text.length == 0 &&
@@ -30,33 +80,14 @@ class ReplacmentsManager {
       ) return
 
       if (htmlElement.children[0].text.length > 0) {
-        selectedGroup += 1
-
-        replacmentsArray.push({
-          group: htmlElement.children[0].text,
-          lessons: [
-            {
-              lessonPosition: htmlElement.children[1].text,
-              replacedLesson: htmlElement.children[2].text,
-              substitutedLesson: htmlElement.children[3].text,
-              lessonClassroom: htmlElement.children[4].text
-            }
-          ]
-        })
+        formatReplacment(htmlElement.children, true)
       }
 
       if (
         htmlElement.children[0].text.length <= 0 &&
         htmlElement.children[1].text.length > 0
       ) {
-        replacmentsArray[selectedGroup].lessons.push(
-          {
-            lessonPosition: htmlElement.children[1].text,
-            replacedLesson: htmlElement.children[2].text,
-            substitutedLesson: htmlElement.children[3].text,
-            lessonClassroom: htmlElement.children[4].text
-          }
-        )
+        formatReplacment(htmlElement.children, false)
       }
     }
 

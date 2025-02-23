@@ -32,7 +32,20 @@ const GroupManager = {
 
     const fuse = new Fuse(groupList)
 
-    return fuse.search(targetGroup)[0].item;
+    const getGroupString = () => {
+      try {
+        const id = fuse.search(targetGroup)[0].item
+
+        return id
+      } catch (TypeError) {
+        return ""
+      }
+    }
+
+    return {
+      found: fuse.search(targetGroup).length > 0,
+      name: getGroupString()
+    };
   }
 }
 

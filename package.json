@@ -4,7 +4,8 @@
   "description": "A bot to get schedules/replacements in the TTGDT",
   "main": "index.js",
   "scripts": {
-    "start": "node src/bot/index.js",
+    "start:with-env": "node --env-file=.env src/bot/index.js",
+    "start:without-env": "node src/bot/index.js",
     "test": "node src/api/tests/index.js"
   },
   "repository": {
